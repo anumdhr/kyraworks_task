@@ -6,6 +6,7 @@ import 'package:kyra_works_test/core/functions.dart';
 import 'package:kyra_works_test/core/theme/app_theme.dart';
 import 'package:kyra_works_test/features/incidents/model/incident_model.dart';
 import 'package:kyra_works_test/features/incidents/widgets/incident_list_widgets/pulse_dot.dart';
+import 'package:kyra_works_test/features/incidents/widgets/incident_list_widgets/severity_badge.dart';
 
 class IncidentTile extends StatelessWidget {
   final IncidentModel incident;

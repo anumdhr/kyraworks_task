@@ -245,7 +245,7 @@ class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
             style: TextStyle(
               fontSize: 11,
               letterSpacing: 1.5,
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
             ),
           ),
         ],

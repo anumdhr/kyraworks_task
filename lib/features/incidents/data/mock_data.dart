@@ -70,12 +70,12 @@ IncidentModel generateLiveIncident(int simulationCount) {
     'Main Gate Cam',
   ];
 
-  final severities = [
-    IncidentSeverity.low,
-    IncidentSeverity.medium,
-    IncidentSeverity.high,
-    IncidentSeverity.critical,
-  ];
+  // final severities = [
+  //   IncidentSeverity.low,
+  //   IncidentSeverity.medium,
+  //   IncidentSeverity.high,
+  //   IncidentSeverity.critical,
+  // ];
 
   final severityWeighted = [
     IncidentSeverity.low,

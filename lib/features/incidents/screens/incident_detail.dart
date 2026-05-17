@@ -10,6 +10,7 @@ import 'package:kyra_works_test/features/incidents/model/incident_model.dart';
 import 'package:kyra_works_test/features/incidents/widgets/incident_detail_widgets/action_button.dart';
 import 'package:kyra_works_test/features/incidents/widgets/incident_detail_widgets/confidencebar.dart';
 import 'package:kyra_works_test/features/incidents/widgets/incident_detail_widgets/section_header.dart';
+import 'package:kyra_works_test/features/incidents/widgets/incident_list_widgets/severity_badge.dart';
 
 class IncidentDetailScreen extends ConsumerWidget {
   final String incidentId;
@@ -30,7 +31,7 @@ class IncidentDetailScreen extends ConsumerWidget {
         body: Center(
           child: Text(
             'Incident not found.',
-            style: TextStyle(color: Colors.white.withOpacity(0.4)),
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
           ),
         ),
       );
@@ -52,7 +53,7 @@ class IncidentDetailScreen extends ConsumerWidget {
               incident.category,
               style: TextStyle(
                 fontSize: 10,
-                color: Colors.white.withOpacity(0.4),
+                color: Colors.white.withValues(alpha: 0.4),
                 letterSpacing: 0.3,
                 fontWeight: FontWeight.normal,
               ),
@@ -89,7 +90,7 @@ class IncidentDetailScreen extends ConsumerWidget {
               incident.description,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.white.withOpacity(0.75),
+                color: Colors.white.withValues(alpha: 0.75),
                 height: 1.6,
               ),
             ),
@@ -103,10 +104,10 @@ class IncidentDetailScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFF00D4FF).withOpacity(0.05),
+                color: const Color(0xFF00D4FF).withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
-                  color: const Color(0xFF00D4FF).withOpacity(0.2),
+                  color: const Color(0xFF00D4FF).withValues(alpha: 0.2),
                 ),
               ),
               child: Text(
@@ -148,10 +149,10 @@ class IncidentDetailScreen extends ConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF4040).withOpacity(0.08),
+                    color: const Color(0xFFFF4040).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: const Color(0xFFFF4040).withOpacity(0.3),
+                      color: const Color(0xFFFF4040).withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
@@ -167,7 +168,9 @@ class IncidentDetailScreen extends ConsumerWidget {
                           'This incident is escalated. Dismiss and Verify actions are locked.',
                           style: TextStyle(
                             fontSize: 11,
-                            color: const Color(0xFFFF4040).withOpacity(0.8),
+                            color: const Color(
+                              0xFFFF4040,
+                            ).withValues(alpha: 0.8),
                           ),
                         ),
                       ),
@@ -187,9 +190,12 @@ class IncidentDetailScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: sevStyle.color.withOpacity(0.06),
+        color: sevStyle.color.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: sevStyle.color.withOpacity(0.25), width: 1),
+        border: Border.all(
+          color: sevStyle.color.withValues(alpha: 0.25),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,14 +207,14 @@ class IncidentDetailScreen extends ConsumerWidget {
               Icon(
                 Icons.access_time,
                 size: 12,
-                color: sevStyle.color.withOpacity(0.7),
+                color: sevStyle.color.withValues(alpha: 0.7),
               ),
               const SizedBox(width: 4),
               Text(
                 fmt.format(incident.time),
                 style: TextStyle(
                   fontSize: 11,
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.white.withValues(alpha: 0.5),
                 ),
               ),
             ],
@@ -316,7 +322,7 @@ class IncidentDetailScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('⚠️ $error'),
-          backgroundColor: const Color(0xFFFF4040).withOpacity(0.9),
+          backgroundColor: const Color(0xFFFF4040).withValues(alpha: 0.9),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 3),
         ),
@@ -327,7 +333,7 @@ class IncidentDetailScreen extends ConsumerWidget {
           content: Text(
             '✓ Incident ${incident.id} marked as ${newStatus.label}',
           ),
-          backgroundColor: const Color(0xFF4CAF50).withOpacity(0.9),
+          backgroundColor: const Color(0xFF4CAF50).withValues(alpha: 0.9),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),
         ),
@@ -355,7 +361,10 @@ class IncidentDetailScreen extends ConsumerWidget {
         content: Text(
           'This will escalate incident ${incident.id} to administration. '
           'Dismiss and Verify actions will be locked.\n\nContinue?',
-          style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.7)),
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.white.withValues(alpha: 0.7),
+          ),
         ),
         actions: [
           TextButton(
@@ -371,7 +380,7 @@ class IncidentDetailScreen extends ConsumerWidget {
               _updateStatus(context, ref, incident, IncidentStatus.escalated);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF4040).withOpacity(0.2),
+              backgroundColor: const Color(0xFFFF4040).withValues(alpha: 0.2),
               foregroundColor: const Color(0xFFFF4040),
             ),
             child: const Text('ESCALATE'),
@@ -454,7 +463,7 @@ class _TimelineEntry extends StatelessWidget {
                   margin: const EdgeInsets.only(top: 4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF00D4FF).withOpacity(0.7),
+                    color: const Color(0xFF00D4FF).withValues(alpha: 0.7),
                   ),
                 ),
                 if (!isLast)
@@ -462,7 +471,7 @@ class _TimelineEntry extends StatelessWidget {
                     child: Container(
                       width: 1,
                       margin: const EdgeInsets.symmetric(vertical: 2),
-                      color: const Color(0xFF00D4FF).withOpacity(0.2),
+                      color: const Color(0xFF00D4FF).withValues(alpha: 0.2),
                     ),
                   ),
               ],
@@ -476,7 +485,7 @@ class _TimelineEntry extends StatelessWidget {
                 text,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                   height: 1.5,
                 ),
               ),
