@@ -12,10 +12,10 @@ class AppTheme {
     useMaterial3: true,
     brightness: Brightness.dark,
     colorScheme: const ColorScheme.dark(
-      primary: Color(0xFF00D4FF), // Cyan accent
-      secondary: Color(0xFFFF6B35), // Orange for alerts
-      surface: Color(0xFF0F1117), // Near-black
-      surfaceContainerHigh: Color(0xFF1A1D27), // Card background
+      primary: Color(0xFF00D4FF),
+      secondary: Color(0xFFFF6B35),
+      surface: Color(0xFF0F1117),
+      surfaceContainerHigh: Color(0xFF1A1D27),
       onSurface: Color(0xFFE8ECF0),
       error: Color(0xFFFF4040),
     ),

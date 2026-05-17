@@ -1,5 +1,3 @@
-// lib/data/mock_data.dart
-
 import 'dart:math';
 
 import 'package:kyra_works_test/features/incidents/model/incident_model.dart';
@@ -25,6 +23,131 @@ final Map<String, dynamic> incomingIncidentJson = {
 
 IncidentModel get incomingIncident =>
     IncidentModel.fromJson(incomingIncidentJson);
+
+IncidentModel generateLiveIncident(int simulationCount) {
+  final rng = Random();
+
+  final categories = [
+    'Restricted Area Access',
+    'Playground Boundary Alert',
+    'Unauthorized Visitor',
+    'Suspicious Behavior',
+    'After-Hours Activity',
+    'Gate Breach',
+    'Emergency Exit Breach',
+    'Parking Lot Incident',
+    'Cafeteria Disturbance',
+    'Equipment Tampering',
+  ];
+
+  final locations = [
+    'Main Building - Entrance',
+    'Gymnasium - Side Exit',
+    'Library - Rear',
+    'Cafeteria - Emergency Exit',
+    'Parking Lot A',
+    'Science Wing - Lab 3',
+    'Playground - West Fence',
+    'Sports Field - Perimeter',
+    'Bus Bay - Zone 2',
+    'East Wing - Stairwell',
+    'Boiler Room - Sub-level',
+    'Main Gate - Security Post',
+  ];
+
+  final cameras = [
+    'Entrance Cam 1',
+    'Gym Perimeter Cam',
+    'Library Ext Cam',
+    'Cafeteria Cam A',
+    'Parking Lot Cam 1',
+    'Science Wing Cam',
+    'Playground North Cam',
+    'Sports Field Cam',
+    'Bus Bay Cam 2',
+    'East Stairwell Cam',
+    'Boiler Room Cam',
+    'Main Gate Cam',
+  ];
+
+  final severities = [
+    IncidentSeverity.low,
+    IncidentSeverity.medium,
+    IncidentSeverity.high,
+    IncidentSeverity.critical,
+  ];
+
+  final severityWeighted = [
+    IncidentSeverity.low,
+    IncidentSeverity.medium,
+    IncidentSeverity.medium,
+    IncidentSeverity.high,
+    IncidentSeverity.high,
+    IncidentSeverity.critical,
+  ];
+
+  final descriptions = [
+    'A person was detected accessing a restricted zone during class hours. Immediate review recommended.',
+    'Camera flagged unusual movement near a secured entry point. Possible unauthorized access.',
+    'An individual was observed lingering near a boundary for an extended period without staff present.',
+    'Motion sensors confirm presence of an unidentified person in a restricted area.',
+    'AI detection flagged suspicious behavior in proximity to a secured asset.',
+    'After-hours movement detected by perimeter cameras. No authorized personnel logged.',
+    'Visitor detected in a restricted corridor without valid badge or escort.',
+    'Crowding behavior detected near a fire exit, potentially blocking emergency egress.',
+  ];
+
+  final timelines = [
+    [
+      'Motion detected in restricted zone',
+      'Individual remained stationary for 45 seconds',
+      'No authorized personnel in vicinity',
+    ],
+    [
+      'Unusual activity flagged by AI model',
+      'Camera tracked movement across boundary',
+      'Alert escalated to review queue',
+    ],
+    [
+      'Perimeter sensor activated',
+      'Camera feed shows sustained movement near fence',
+      'No response from nearby duty staff',
+    ],
+    [
+      'Door sensor triggered simultaneously with camera detection',
+      'Identity verification not possible from camera angle',
+      'Incident logged and queued for operator review',
+    ],
+  ];
+
+  final actions = [
+    'Review footage and notify security personnel immediately.',
+    'Cross-reference with badge access logs and verify identity.',
+    'Send duty officer to location and assess situation.',
+    'Escalate to administration if activity is confirmed suspicious.',
+    'Alert nearby staff and request visual confirmation.',
+    'Dispatch security patrol to the reported area.',
+  ];
+
+  final catIdx = rng.nextInt(categories.length);
+  final locIdx = rng.nextInt(locations.length);
+
+  final id = 'SCH-${2000 + simulationCount}';
+
+  return IncidentModel(
+    id: id,
+    severity: severityWeighted[rng.nextInt(severityWeighted.length)],
+    category: categories[catIdx],
+    location: locations[locIdx],
+    cameraName: cameras[rng.nextInt(cameras.length)],
+    status: IncidentStatus.newIncident,
+    time: DateTime.now(),
+    confidence: 65 + rng.nextInt(34),
+    description: descriptions[rng.nextInt(descriptions.length)],
+    recommendedAction: actions[rng.nextInt(actions.length)],
+    timeline: timelines[rng.nextInt(timelines.length)],
+  );
+}
 
 List<IncidentModel> generateSeedIncidents() {
   final incidents = <IncidentModel>[];
@@ -172,7 +295,7 @@ List<IncidentModel> generateSeedIncidents() {
   ];
 
   final baseTime = DateTime(2026, 5, 11, 10, 15);
-  // final rng = _SeededRandom(42);
+
   final random = Random();
 
   for (int i = 2; i <= 510; i++) {
@@ -205,6 +328,5 @@ List<IncidentModel> generateSeedIncidents() {
   }
 
   incidents.sort((a, b) => b.time.compareTo(a.time));
-
   return incidents;
 }

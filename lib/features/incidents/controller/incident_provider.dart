@@ -8,16 +8,24 @@ import 'package:kyra_works_test/features/incidents/model/incident_model.dart';
 enum LoadState { loading, loaded, error }
 
 class IncidentState {
+  static const Object _unset = Object();
+
   final List<IncidentModel> incidents;
   final LoadState loadState;
   final String? errorMessage;
   final bool isSimulating;
+  final int simulationCount;
+  final IncidentStatus? filterStatus;
+  final IncidentSeverity? filterSeverity;
 
   const IncidentState({
     this.incidents = const [],
     this.loadState = LoadState.loading,
     this.errorMessage,
     this.isSimulating = false,
+    this.simulationCount = 0,
+    this.filterStatus,
+    this.filterSeverity,
   });
 
   IncidentState copyWith({
@@ -25,12 +33,22 @@ class IncidentState {
     LoadState? loadState,
     String? errorMessage,
     bool? isSimulating,
+    int? simulationCount,
+    Object? filterStatus = _unset,
+    Object? filterSeverity = _unset,
   }) {
     return IncidentState(
       incidents: incidents ?? this.incidents,
       loadState: loadState ?? this.loadState,
       errorMessage: errorMessage,
       isSimulating: isSimulating ?? this.isSimulating,
+      simulationCount: simulationCount ?? this.simulationCount,
+      filterStatus: filterStatus == _unset
+          ? this.filterStatus
+          : filterStatus as IncidentStatus?,
+      filterSeverity: filterSeverity == _unset
+          ? this.filterSeverity
+          : filterSeverity as IncidentSeverity?,
     );
   }
 
@@ -49,7 +67,7 @@ class IncidentNotifier extends StateNotifier<IncidentState> {
   }
 
   Future<void> _load() async {
-    state = state.copyWith(loadState: LoadState.loading);
+    state = state.copyWith(loadState: LoadState.loading, simulationCount: 0);
     try {
       await Future.delayed(const Duration(milliseconds: 600));
       final incidents = generateSeedIncidents();
@@ -66,14 +84,33 @@ class IncidentNotifier extends StateNotifier<IncidentState> {
     await _load();
   }
 
+  void setStatusFilter(IncidentStatus? status) {
+    state = state.copyWith(filterStatus: status, filterSeverity: null);
+  }
+
+  void setSeverityFilter(IncidentSeverity? severity) {
+    state = state.copyWith(filterSeverity: severity, filterStatus: null);
+  }
+
+  void clearFilters() {
+    state = state.copyWith(filterStatus: null, filterSeverity: null);
+  }
+
   Future<void> simulateIncomingIncident() async {
     state = state.copyWith(isSimulating: true);
     await Future.delayed(const Duration(milliseconds: 400));
 
-    final incoming = incomingIncident;
+    final count = state.simulationCount;
+    final IncidentModel incoming;
+
+    if (count == 0) {
+      incoming = incomingIncident;
+    } else {
+      incoming = generateLiveIncident(count);
+    }
     _upsertIncident(incoming);
 
-    state = state.copyWith(isSimulating: false);
+    state = state.copyWith(isSimulating: false, simulationCount: count + 1);
   }
 
   String? updateStatus(String incidentId, IncidentStatus newStatus) {

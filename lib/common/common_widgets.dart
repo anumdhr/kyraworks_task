@@ -1,12 +1,6 @@
-// lib/widgets/shared_widgets.dart
-
 import 'package:flutter/material.dart';
 import 'package:kyra_works_test/core/theme/app_theme.dart';
 import 'package:kyra_works_test/features/incidents/model/incident_model.dart';
-
-// ---------------------------------------------------------------------------
-// Severity Badge
-// ---------------------------------------------------------------------------
 
 class SeverityBadge extends StatelessWidget {
   final IncidentSeverity severity;
@@ -29,7 +23,7 @@ class SeverityBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: style.background,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: style.color.withOpacity(0.5), width: 1),
+        border: Border.all(color: style.color.withValues(alpha: 0.5), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -51,10 +45,6 @@ class SeverityBadge extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Status Chip
-// ---------------------------------------------------------------------------
-
 class StatusChip extends StatelessWidget {
   final IncidentStatus status;
   final bool compact;
@@ -72,7 +62,7 @@ class StatusChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: style.background,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: style.color.withOpacity(0.4), width: 1),
+        border: Border.all(color: style.color.withValues(alpha: 0.4), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -93,157 +83,6 @@ class StatusChip extends StatelessWidget {
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// Confidence Bar
-// ---------------------------------------------------------------------------
-
-class ConfidenceBar extends StatelessWidget {
-  final int confidence;
-
-  const ConfidenceBar({super.key, required this.confidence});
-
-  Color get _barColor {
-    if (confidence >= 90) return const Color(0xFFFF4040);
-    if (confidence >= 75) return const Color(0xFFFF8C00);
-    if (confidence >= 60) return const Color(0xFFFFD700);
-    return const Color(0xFF4CAF50);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              'AI CONFIDENCE',
-              style: TextStyle(
-                fontSize: 9,
-                letterSpacing: 1,
-                color: Colors.white.withOpacity(0.4),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Spacer(),
-            Text(
-              '$confidence%',
-              style: TextStyle(
-                fontSize: 11,
-                color: _barColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: LinearProgressIndicator(
-            value: confidence / 100,
-            backgroundColor: Colors.white.withOpacity(0.1),
-            valueColor: AlwaysStoppedAnimation<Color>(_barColor),
-            minHeight: 3,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Section Header (for detail screen sections)
-// ---------------------------------------------------------------------------
-
-class SectionHeader extends StatelessWidget {
-  final String title;
-  final IconData icon;
-
-  const SectionHeader({super.key, required this.title, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 13, color: const Color(0xFF00D4FF)),
-          const SizedBox(width: 6),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 11,
-              letterSpacing: 1.5,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF00D4FF),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Divider(
-              color: const Color(0xFF00D4FF).withOpacity(0.2),
-              thickness: 1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Action Button
-// ---------------------------------------------------------------------------
-
-class ActionButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final VoidCallback? onPressed;
-  final bool isDisabled;
-  final String? disabledReason;
-
-  const ActionButton({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.color,
-    this.onPressed,
-    this.isDisabled = false,
-    this.disabledReason,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: isDisabled ? (disabledReason ?? 'Unavailable') : label,
-      child: ElevatedButton.icon(
-        onPressed: isDisabled ? null : onPressed,
-        icon: Icon(icon, size: 16),
-        label: Text(
-          label,
-          style: const TextStyle(fontSize: 12, letterSpacing: 0.5),
-        ),
-        style: ElevatedButton.styleFrom(
-          foregroundColor: isDisabled ? Colors.white38 : color,
-          backgroundColor: isDisabled
-              ? Colors.white.withOpacity(0.05)
-              : color.withOpacity(0.15),
-          side: BorderSide(
-            color: isDisabled ? Colors.white12 : color.withOpacity(0.5),
-          ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        ),
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Error State Widget
-// ---------------------------------------------------------------------------
 
 class ErrorStateWidget extends StatelessWidget {
   final String message;
@@ -280,7 +119,7 @@ class ErrorStateWidget extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 24),
@@ -300,10 +139,6 @@ class ErrorStateWidget extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Empty State Widget
-// ---------------------------------------------------------------------------
-
 class EmptyStateWidget extends StatelessWidget {
   const EmptyStateWidget({super.key});
 
@@ -316,7 +151,7 @@ class EmptyStateWidget extends StatelessWidget {
           Icon(
             Icons.shield_outlined,
             size: 64,
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
           ),
           const SizedBox(height: 16),
           Text(
@@ -324,7 +159,7 @@ class EmptyStateWidget extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               letterSpacing: 2,
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -333,7 +168,7 @@ class EmptyStateWidget extends StatelessWidget {
             'All clear. Campus is secure.',
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
             ),
           ),
         ],

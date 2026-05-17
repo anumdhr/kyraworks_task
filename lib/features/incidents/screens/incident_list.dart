@@ -7,8 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kyra_works_test/common/common_widgets.dart';
 import 'package:kyra_works_test/features/incidents/controller/incident_provider.dart';
 import 'package:kyra_works_test/features/incidents/model/incident_model.dart';
-import 'package:kyra_works_test/features/incidents/widgets/incident_list/incident_tile.dart';
-import 'package:kyra_works_test/features/incidents/widgets/incident_list/stat_pill.dart';
+import 'package:kyra_works_test/features/incidents/screens/incident_detail.dart';
+import 'package:kyra_works_test/features/incidents/widgets/incident_list_widgets/incident_tile.dart';
+import 'package:kyra_works_test/features/incidents/widgets/incident_list_widgets/stat_pill.dart';
 
 class IncidentListScreen extends ConsumerStatefulWidget {
   const IncidentListScreen({super.key});
@@ -20,8 +21,6 @@ class IncidentListScreen extends ConsumerStatefulWidget {
 class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
   static const int _itemsPerPage = 20;
 
-  IncidentStatus? _filterStatus;
-  IncidentSeverity? _filterSeverity;
   String? _lastSimulatedId;
   final ScrollController _scrollController = ScrollController();
   int _visibleItemCount = _itemsPerPage;
@@ -76,7 +75,7 @@ class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
           icon: Stack(
             children: [
               const Icon(Icons.filter_list, size: 20),
-              if (_filterStatus != null || _filterSeverity != null)
+              if (state.filterStatus != null || state.filterSeverity != null)
                 Positioned(
                   right: 0,
                   top: 0,
@@ -157,23 +156,25 @@ class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
   }
 
   void _handleFilter(String value) {
-    setState(() {
-      if (value == 'clear') {
-        _filterStatus = null;
-        _filterSeverity = null;
-        _resetVisibleItems();
-      } else if (value.startsWith('status_')) {
-        final v = value.replaceFirst('status_', '');
-        _filterStatus = IncidentStatus.fromString(v);
-        _filterSeverity = null;
-        _resetVisibleItems();
-      } else if (value.startsWith('severity_')) {
-        final v = value.replaceFirst('severity_', '');
-        _filterSeverity = IncidentSeverity.fromString(v);
-        _filterStatus = null;
-        _resetVisibleItems();
-      }
-    });
+    final notifier = ref.read(incidentProvider.notifier);
+    if (value == 'clear') {
+      notifier.clearFilters();
+      _resetVisibleItems();
+      return;
+    }
+
+    if (value.startsWith('status_')) {
+      final v = value.replaceFirst('status_', '');
+      notifier.setStatusFilter(IncidentStatus.fromString(v));
+      _resetVisibleItems();
+      return;
+    }
+
+    if (value.startsWith('severity_')) {
+      final v = value.replaceFirst('severity_', '');
+      notifier.setSeverityFilter(IncidentSeverity.fromString(v));
+      _resetVisibleItems();
+    }
   }
 
   void _resetVisibleItems() {
@@ -294,7 +295,7 @@ class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
                 key: ValueKey(incident.id),
                 incident: incident,
                 isNew: incident.id == _lastSimulatedId,
-                onTap: () {},
+                onTap: () => _openDetail(incident.id),
               );
             },
           ),
@@ -307,8 +308,10 @@ class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
   List<IncidentModel> _filteredIncidents(IncidentState state) {
     final sorted = state.sortedIncidents;
     return sorted.where((i) {
-      if (_filterStatus != null && i.status != _filterStatus) return false;
-      if (_filterSeverity != null && i.severity != _filterSeverity) {
+      if (state.filterStatus != null && i.status != state.filterStatus) {
+        return false;
+      }
+      if (state.filterSeverity != null && i.severity != state.filterSeverity) {
         return false;
       }
       return true;
@@ -399,14 +402,13 @@ class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
               color: const Color(0xFFFF8C00),
             ),
 
-            if (_filterStatus != null || _filterSeverity != null) ...[
+            if (state.filterStatus != null || state.filterSeverity != null) ...[
               SizedBox(width: 6),
               GestureDetector(
-                onTap: () => setState(() {
-                  _filterStatus = null;
-                  _filterSeverity = null;
+                onTap: () {
+                  ref.read(incidentProvider.notifier).clearFilters();
                   _resetVisibleItems();
-                }),
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -513,6 +515,14 @@ class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _openDetail(String incidentId) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => IncidentDetailScreen(incidentId: incidentId),
       ),
     );
   }
