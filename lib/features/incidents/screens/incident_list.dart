@@ -459,23 +459,28 @@ class _IncidentListScreenState extends ConsumerState<IncidentListScreen> {
                     ? null
                     : () async {
                         final notifier = ref.read(incidentProvider.notifier);
-                        await notifier.simulateIncomingIncident();
+                        final incoming = await notifier
+                            .simulateIncomingIncident();
+                        // Determine the most-recent incident id from state
 
-                        setState(() => _lastSimulatedId = 'SCH-1005');
+                        final newId = incoming.id;
 
-                        Future.delayed(const Duration(seconds: 5), () {
-                          if (mounted) {
-                            setState(() => _lastSimulatedId = null);
-                          }
-                        });
                         if (mounted) {
+                          setState(() => _lastSimulatedId = newId);
+
+                          Future.delayed(const Duration(seconds: 5), () {
+                            if (mounted) {
+                              setState(() => _lastSimulatedId = null);
+                            }
+                          });
+
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                            SnackBar(
                               content: Text(
-                                '📡 Incoming incident received: SCH-1005',
+                                '📡 Incoming incident received: $newId',
                               ),
                               behavior: SnackBarBehavior.floating,
-                              duration: Duration(seconds: 3),
+                              duration: const Duration(seconds: 3),
                             ),
                           );
                         }

@@ -98,21 +98,23 @@ class IncidentNotifier extends Notifier<IncidentState> {
     state = state.copyWith(filterStatus: null, filterSeverity: null);
   }
 
-  Future<void> simulateIncomingIncident() async {
+  Future<IncidentModel> simulateIncomingIncident() async {
     state = state.copyWith(isSimulating: true);
     await Future.delayed(const Duration(milliseconds: 400));
 
     final count = state.simulationCount;
-    final IncidentModel incoming;
+    IncidentModel incoming;
 
     if (count == 0) {
       incoming = incomingIncident;
     } else {
       incoming = generateLiveIncident(count);
     }
+
     _upsertIncident(incoming);
 
     state = state.copyWith(isSimulating: false, simulationCount: count + 1);
+    return incoming;
   }
 
   String? updateStatus(String incidentId, IncidentStatus newStatus) {
@@ -138,9 +140,11 @@ class IncidentNotifier extends Notifier<IncidentState> {
     final existingIdx = list.indexWhere((i) => i.id == incident.id);
 
     if (existingIdx >= 0) {
-      list[existingIdx] = incident;
+      final refreshed = incident.copyWith(time: DateTime.now());
+      list.removeAt(existingIdx);
+      list.insert(0, refreshed);
     } else {
-      list.insert(0, incident);
+      list.insert(0, incident.copyWith(time: DateTime.now()));
     }
 
     state = state.copyWith(incidents: list);
