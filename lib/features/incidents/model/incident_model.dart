@@ -152,10 +152,13 @@ class IncidentModel {
       identical(this, other) ||
       other is IncidentModel &&
           runtimeType == other.runtimeType &&
-          id == other.id;
+          id == other.id &&
+          status == other.status && // ← add these
+          severity == other.severity &&
+          confidence == other.confidence;
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => Object.hash(id, status, severity, confidence);
 
   @override
   String toString() => 'Incident(id: $id, status: ${status.label})';

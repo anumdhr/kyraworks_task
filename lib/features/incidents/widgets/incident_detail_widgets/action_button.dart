@@ -29,16 +29,30 @@ class ActionButton extends StatelessWidget {
           label,
           style: const TextStyle(fontSize: 12, letterSpacing: 0.5),
         ),
-        style: ElevatedButton.styleFrom(
-          foregroundColor: isDisabled ? Colors.white38 : color,
-          backgroundColor: isDisabled
-              ? Colors.white.withValues(alpha: 0.05)
-              : color.withValues(alpha: 0.15),
-          side: BorderSide(
-            color: isDisabled ? Colors.white12 : color.withValues(alpha: 0.5),
+        style: ButtonStyle(
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) return Colors.white24;
+            return color;
+          }),
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return Colors.white.withValues(alpha: 0.04);
+            }
+            return color.withValues(alpha: 0.15);
+          }),
+          side: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.disabled)) {
+              return const BorderSide(color: Colors.white10);
+            }
+            return BorderSide(color: color.withValues(alpha: 0.5));
+          }),
+          elevation: const WidgetStatePropertyAll(0),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          ),
         ),
       ),
     );
