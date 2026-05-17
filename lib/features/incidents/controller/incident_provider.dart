@@ -1,7 +1,6 @@
 // lib/providers/incident_provider.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:kyra_works_test/features/incidents/data/mock_data.dart';
 import 'package:kyra_works_test/features/incidents/model/incident_model.dart';
 
@@ -61,9 +60,12 @@ class IncidentState {
   bool get isEmpty => incidents.isEmpty && loadState == LoadState.loaded;
 }
 
-class IncidentNotifier extends StateNotifier<IncidentState> {
-  IncidentNotifier() : super(const IncidentState()) {
+class IncidentNotifier extends Notifier<IncidentState> {
+  @override
+  IncidentState build() {
+    state = const IncidentState();
     _load();
+    return state;
   }
 
   Future<void> _load() async {
@@ -145,10 +147,8 @@ class IncidentNotifier extends StateNotifier<IncidentState> {
   }
 }
 
-final incidentProvider = StateNotifierProvider<IncidentNotifier, IncidentState>(
-  (ref) {
-    return IncidentNotifier();
-  },
+final incidentProvider = NotifierProvider<IncidentNotifier, IncidentState>(
+  IncidentNotifier.new,
 );
 
 final incidentByIdProvider = Provider.family<IncidentModel?, String>((ref, id) {

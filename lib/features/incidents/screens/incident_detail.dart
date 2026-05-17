@@ -19,9 +19,6 @@ class IncidentDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the specific incident reactively — if it updates (live or from
-    // status change), this widget rebuilds automatically. This is the
-    // "Active Detail Sync" requirement from the spec.
     final incident = ref.watch(incidentByIdProvider(incidentId));
 
     if (incident == null) {
@@ -73,15 +70,12 @@ class IncidentDetailScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header card: severity, location, camera, time
             _buildHeaderCard(incident, sevStyle),
             const SizedBox(height: 16),
 
-            // AI Confidence
             ConfidenceBar(confidence: incident.confidence),
             const SizedBox(height: 20),
 
-            // Description
             const SectionHeader(
               title: 'DESCRIPTION',
               icon: Icons.description_outlined,
@@ -96,7 +90,6 @@ class IncidentDetailScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
 
-            // Recommended Action
             const SectionHeader(
               title: 'RECOMMENDED ACTION',
               icon: Icons.lightbulb_outline,
@@ -121,7 +114,6 @@ class IncidentDetailScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
 
-            // Timeline
             const SectionHeader(
               title: 'TIMELINE',
               icon: Icons.timeline_outlined,
@@ -135,14 +127,12 @@ class IncidentDetailScreen extends ConsumerWidget {
             }),
             const SizedBox(height: 24),
 
-            // Actions
             const SectionHeader(
               title: 'ACTIONS',
               icon: Icons.touch_app_outlined,
             ),
             _buildActionGrid(context, ref, incident),
 
-            // Escalation warning
             if (incident.status == IncidentStatus.escalated)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
@@ -245,7 +235,6 @@ class IncidentDetailScreen extends ConsumerWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        // Mark as Under Review
         ActionButton(
           label: 'Under Review',
           icon: Icons.remove_red_eye_outlined,
@@ -260,7 +249,6 @@ class IncidentDetailScreen extends ConsumerWidget {
               _updateStatus(context, ref, incident, IncidentStatus.underReview),
         ),
 
-        // Verify
         ActionButton(
           label: 'Verify',
           icon: Icons.verified_outlined,
@@ -276,7 +264,6 @@ class IncidentDetailScreen extends ConsumerWidget {
               _updateStatus(context, ref, incident, IncidentStatus.verified),
         ),
 
-        // Dismiss
         ActionButton(
           label: 'Dismiss',
           icon: Icons.cancel_outlined,
@@ -293,7 +280,6 @@ class IncidentDetailScreen extends ConsumerWidget {
               _updateStatus(context, ref, incident, IncidentStatus.dismissed),
         ),
 
-        // Escalate
         ActionButton(
           label: 'Escalate',
           icon: Icons.trending_up_rounded,
@@ -391,10 +377,6 @@ class IncidentDetailScreen extends ConsumerWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Info row
-// ---------------------------------------------------------------------------
-
 class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -431,10 +413,6 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
-
-// ---------------------------------------------------------------------------
-// Timeline entry
-// ---------------------------------------------------------------------------
 
 class _TimelineEntry extends StatelessWidget {
   final int index;

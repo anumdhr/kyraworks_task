@@ -68,8 +68,34 @@ lib/
 
 ##  State Management
 
-This app uses Flutter_riverpod with StateNotifier.
+This app uses Flutter_riverpod with the newer `Notifier` API.
 
+**How the app is structured:**
+
+- **Feature-first:** the app logic is organized under `lib/features/`, with the incidents feature contained in `lib/features/incidents/` (model, data, controller, screens, widgets).
+- **Entrypoints:** `lib/main.dart` boots `ProviderScope` and `lib/app.dart` configures the app/theme and routes.
+
+**How state is managed:**
+
+- Uses Riverpod's `Notifier` API: `incidentProvider` is a `NotifierProvider<IncidentNotifier, IncidentState>` and `incidentByIdProvider` is a `Provider.family<IncidentModel?, String>` that selects a single incident from the state.
+- `IncidentNotifier` exposes imperative methods (reload, simulateIncomingIncident, set filters, clearFilters, upsert, etc.) and updates the `IncidentState` which holds the incident list and UI filters.
+
+**How duplicate incidents are handled:**
+
+- The notifier uses an _upsert_ strategy: when a new incident arrives, the notifier checks for an existing incident with the same `id` and replaces it (update) or prepends the new incident (insert). This prevents duplicate entries while keeping incoming updates reflected in place.
+
+**How list and detail screens stay synchronized:**
+
+- The list screen watches `incidentProvider` for the full `IncidentState`.
+- The detail screen watches `incidentByIdProvider(incidentId)`, which reads the incidents from `incidentProvider` and returns the matching `IncidentModel?`.
+- Because the detail provider derives its value from the central `incidentProvider` state, any mutation (upsert, status change, etc.) made by the notifier is immediately observed by both list and detail views.
+
+**What I'd improve with more time:**
+
+- Persist incidents locally (e.g., Hive/SQLite) and add a backend-backed paging API for large datasets.
+- Replace manual id-based lookup with an indexed store for faster lookups when the list grows.
+
+**Provider details:**
 - incidentProvider provides the current IncidentState.
 - incidentByIdProvider is a Provider.family that returns a single incident by ID.
 - IncidentDetailScreen watches incidentByIdProvider(incidentId) so detail state updates automatically when the list updates.
@@ -90,9 +116,7 @@ This app uses Flutter_riverpod with StateNotifier.
 | Package | Version |
 |---|---|
 | Flutter_riverpod | ^3.3.1 |
-| 
-iverpod_annotation | ^4.0.2 |
-| 	imeago | ^3.7.1 |
+| timeago | ^3.7.1 |
 | intl | ^0.20.2 |
 | cupertino_icons | ^1.0.8 |
 
@@ -105,7 +129,7 @@ flutter pub get
 flutter run
 `
 
-**Recommended SDK:** Flutter 3.8.0+ / Dart 3.0.0+
+**Recommended SDK:** Flutter 3.41.9 / Dart 3.11.5
 
 ---
 
