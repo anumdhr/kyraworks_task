@@ -50,7 +50,7 @@ enum IncidentSeverity {
   }
 }
 
-class Incident {
+class IncidentModel {
   final String id;
   final IncidentSeverity severity;
   final String category;
@@ -63,7 +63,7 @@ class Incident {
   final String recommendedAction;
   final List<String> timeline;
 
-  const Incident({
+  const IncidentModel({
     required this.id,
     required this.severity,
     required this.category,
@@ -77,8 +77,8 @@ class Incident {
     required this.timeline,
   });
 
-  factory Incident.fromJson(Map<String, dynamic> json) {
-    return Incident(
+  factory IncidentModel.fromJson(Map<String, dynamic> json) {
+    return IncidentModel(
       id: json['id'] as String,
       severity: IncidentSeverity.fromString(json['severity'] as String),
       category: json['category'] as String,
@@ -109,7 +109,7 @@ class Incident {
     };
   }
 
-  Incident copyWith({
+  IncidentModel copyWith({
     String? id,
     IncidentSeverity? severity,
     String? category,
@@ -122,7 +122,7 @@ class Incident {
     String? recommendedAction,
     List<String>? timeline,
   }) {
-    return Incident(
+    return IncidentModel(
       id: id ?? this.id,
       severity: severity ?? this.severity,
       category: category ?? this.category,
@@ -137,7 +137,6 @@ class Incident {
     );
   }
 
-  /// Escalated incidents cannot be dismissed or verified
   bool get canDismiss => status != IncidentStatus.escalated;
   bool get canVerify => status != IncidentStatus.escalated;
   bool get canMarkUnderReview =>
@@ -151,7 +150,9 @@ class Incident {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Incident && runtimeType == other.runtimeType && id == other.id;
+      other is IncidentModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   @override
   int get hashCode => id.hashCode;
